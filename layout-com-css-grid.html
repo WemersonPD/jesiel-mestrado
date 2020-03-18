@@ -1,14 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
+    <div class="flex-popit">
+        <div class="popit">1</div>
+        <div class="popit">2</div>
+        <div class="popit">3</div>
+        <div class="popit">4</div>
+    </div>
+
     <div class="gridContainerGeral">
-        <div class="curso">curso</div>
-        <div class="objetivo">objetivo</div>
+        <div class="curso" ondragover="allowDrop(event)" ondrop="drop(event)">curso</div>
+        <div class="objetivo">
+            <div dropzone class="objetivo-esquerda"></div>
+            <div dropzone class="objetivo-direita"></div>
+        </div>
         <div class="indicadores-sucesso">indicadores-sucesso</div>
         <div contenteditable class="avaliacao-aprendizagem">avaliacao-aprendizagem</div>
         <div contenteditable class="problema">problema</div>
@@ -20,77 +32,132 @@
         <div class="cronograma">cronograma</div>
     </div>
 
-    <style>
-        
+    <script>
+        const items = document.querySelectorAll('.popit')
 
-        .gridContainerGeral{
+        function umClick() {
+            items.forEach((item) => {
+                item.draggable = true
+                item.ondragstart = e => e.dataTransfer.setData('item-id', e.target.id)
+
+            })
+
+            const dropzones = document.querySelectorAll('[dropzone]')
+            dropzones.forEach(dropzone => {
+                dropzone.ondragover = e => e.preventDefault()
+                dropzone.ondrop = function(e) {
+                    const id = e.dataTransfer.getData('item-id')
+                    const item = document.getElementById(id)
+                    dropzone.appendChild(item)
+                }
+            })
+        }
+
+        function duploClick(e) {
+            const item = document.getElementById(e.target.id)
+            item.setAttribute('contenteditable', true)
+        }
+
+        items.forEach((item, index) => {
+            item.setAttribute("onclick", "umClick()")
+            item.setAttribute("ondblclick", "duploClick(event)")
+            item.id = item.id || `item-dropavel-${index}`
+
+        })
+    </script>
+
+
+    <style>
+        .flex-popit {
+            display: flex;
+            justify-content: space-around;
+            background-color: chartreuse;
+        }
+        
+        .popit {
+            background-color: brown;
+            min-width: 100px;
+            min-height: 100px;
+            margin: 30px;
+        }
+        
+        .gridContainerGeral {
             display: grid;
             grid-template-rows: 1fr 2fr 2fr 1fr;
             grid-template-columns: 300px 300px 300px 300px 300px;
-            grid-template-areas: 
-            "curso objetivo objetivo objetivo indicadoresDeSucesso"
-            "curso avaliacaoDeAprendizagem problema ambiente indicadoresDeSucesso"
-            "risco conteudo problema capitalHumano processo"
-            "risco cronograma cronograma cronograma processo";
+            grid-template-areas: "curso objetivo objetivo objetivo indicadoresDeSucesso" "curso avaliacaoDeAprendizagem problema ambiente indicadoresDeSucesso" "risco conteudo problema capitalHumano processo" "risco cronograma cronograma cronograma processo";
             grid-gap: 10px;
         }
-
-        .curso{
+        
+        .curso {
             background-color: aqua;
             grid-area: curso;
         }
-
-        .objetivo{
+        
+        .objetivo {
             background-color: green;
             grid-area: objetivo;
             min-height: 100px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-areas: 'esquerda direita';
         }
         
-        .indicadores-sucesso{
+        .objetivo-esquerda {
+            grid-area: esquerda;
+            background-color: cornsilk;
+        }
+        
+        .objetivo-direita {
+            grid-area: direita;
+            background-color: rgb(197, 187, 145);
+        }
+        
+        .indicadores-sucesso {
             background-color: red;
             grid-area: indicadoresDeSucesso;
         }
-
-        .avaliacao-aprendizagem{
+        
+        .avaliacao-aprendizagem {
             background-color: yellow;
             grid-area: avaliacaoDeAprendizagem;
         }
-
-        .problema{
-            background-color : gray;
+        
+        .problema {
+            background-color: gray;
             grid-area: problema;
         }
-
-        .ambiente{
-            background-color : tomato;
+        
+        .ambiente {
+            background-color: tomato;
             grid-area: ambiente;
         }
-
-        .riscos{
-            background-color : rgb(0, 0, 0);
+        
+        .riscos {
+            background-color: rgb(0, 0, 0);
             grid-area: risco;
         }
-
-        .conteudo{
-            background-color : rgb(243, 93, 7);
+        
+        .conteudo {
+            background-color: rgb(243, 93, 7);
             grid-area: conteudo;
         }
-
-        .capital-humano{
-            background-color : rgb(170, 172, 68);
+        
+        .capital-humano {
+            background-color: rgb(170, 172, 68);
             grid-area: capitalHumano;
         }
-
-        .processos{
-            background-color : rgb(78, 129, 101);
+        
+        .processos {
+            background-color: rgb(78, 129, 101);
             grid-area: processo;
         }
-
-        .cronograma{
-            background-color : rgb(133, 5, 253);
+        
+        .cronograma {
+            background-color: rgb(133, 5, 253);
             grid-area: cronograma;
         }
-        
     </style>
 </body>
+
 </html>
